@@ -1,6 +1,11 @@
 <template>
   <div class="login-warp">
-    <el-form :label-position="labelPosition" label-width="80px" :model="formdata" class="login-form">
+    <el-form
+      :label-position="labelPosition"
+      label-width="80px"
+      :model="formdata"
+      class="login-form"
+    >
       <h2>用户登录</h2>
       <el-form-item label="用户名">
         <el-input v-model="formdata.username"></el-input>
@@ -15,24 +20,36 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      labelPosition: 'top',
+      labelPosition: "top",
       formdata: {
-        username: '',
-        password: ''
+        username: "",
+        password: ""
       }
-    }
+    };
   },
-  methods:{
-    handleLogin(){
-        this.$http
-        .post('login',formdata)
-        .then(res=>console.log(2))
-        .catch(err=>console.log(err))
+  methods: {
+    handleLogin() {
+      this.$http
+        .post("login", this.formdata)
+        .then(res => {
+          const {
+            data: {
+              data,
+              meta: { msg, status }
+            }
+          } = res;
+          if (status === 200) {
+            console.log("success----");
+          } else {
+            this.$message.warning(msg);
+          }
+        })
+        .catch(err => console.log(err));
     }
   }
-}
+};
 </script>
 
 <style>
