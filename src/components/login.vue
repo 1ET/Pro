@@ -20,35 +20,40 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
-      labelPosition: "top",
+      labelPosition: 'top',
       formdata: {
-        username: "",
-        password: ""
+        username: '',
+        password: ''
       }
-    };
+    }
   },
   methods: {
-    async handleLogin() {
-      const res = await this.$http.post("login", this.formdata)
+    async handleLogin () {
+      const res = await this.$http.post('login', this.formdata)
       const {
         data: {
-          data,
+          data:{ token },
           meta: { msg, status }
-              }
-            } = res;
+        }
+      } = res
 
       if (status === 200) {
+        // 存token值
+        localStorage.setItem('token',token)
+        // 取token值
+        // localStorage.getItem('token')
+
         this.$router.push({
-            name:'home'
-            })
+          name: 'home'
+        })
       } else {
-            this.$message.error(msg);
-        }
+        this.$message.error(msg)
+      }
     }
   }
-};
+}
 </script>
 
 <style>
