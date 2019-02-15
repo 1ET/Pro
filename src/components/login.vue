@@ -41,10 +41,9 @@ export default {
 
       if (status === 200) {
         // 存token值
-        localStorage.setItem('token',token)
+        localStorage.setItem('token', token)
         // 取token值
         // localStorage.getItem('token')
-
         this.$router.push({
           name: 'home'
         })
