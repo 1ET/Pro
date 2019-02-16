@@ -34,14 +34,14 @@ export default {
       const res = await this.$http.post('login', this.formdata)
       const {
         data: {
-          data:{ token },
+          data,
           meta: { msg, status }
         }
       } = res
 
       if (status === 200) {
         // 存token值
-        localStorage.setItem('token', token)
+        localStorage.setItem('token', data.token)
         // 取token值
         // localStorage.getItem('token')
         this.$router.push({
