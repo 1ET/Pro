@@ -9,12 +9,18 @@
     <!-- 搜索 -->
     <el-row style="margin-top: 15px">
       <el-col :span="10">
-        <el-input placeholder="请输入内容" v-model="query" class="input-with-select">
+        <el-input
+          placeholder="请输入内容"
+          v-model="query"
+          class="input-with-select"
+          clearable
+          @clear="getTableData"
+        >
           <el-button slot="append" icon="el-icon-search" @click="searchVal()"></el-button>
         </el-input>
       </el-col>
       <el-col :span="3" style="margin-left:6px">
-        <el-button type="success">添加用户</el-button>
+        <el-button type="success" @click="dialogFormVisible = true">添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 列表区域 -->
@@ -50,59 +56,89 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
+    <!-- 对话框 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       list: [],
-      query: "",
+      query: '',
       pagenum: 1,
       pagesize: 2,
-      total: -1
-    };
+      total: -1,
+      dialogTableVisible: false,
+      dialogFormVisible: false,
+      formLabelWidth: '80px',
+      form: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      }
+    }
   },
-  created() {
-    this.getTableData();
+  created () {
+    this.getTableData()
   },
   methods: {
     // 每页数量改变
-    handleSizeChange(val) {
-      this.pagenum = 1;
-      this.pagesize = val;
-      this.getTableData();
+    handleSizeChange (val) {
+      this.pagenum = 1
+      this.pagesize = val
+      this.getTableData()
     },
     // 当前页改变
-    handleCurrentChange(val) {
-      this.pagenum = val;
-      this.getTableData();
+    handleCurrentChange (val) {
+      this.pagenum = val
+      this.getTableData()
     },
     // 发请求获取数据
-    async getTableData() {
-      const AUTH_TOKEN = localStorage.getItem("token");
-      this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+    async getTableData () {
+      const AUTH_TOKEN = localStorage.getItem('token')
+      this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
       const res = await this.$http.get(
         `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${
           this.pagesize
         }`
-      );
+      )
       const {
         data,
         meta: { msg, status }
-      } = res.data;
+      } = res.data
       if (status === 200) {
-        this.total = data.total;
-        this.list = data.users;
+        this.total = data.total
+        this.list = data.users
       }
     },
     // 搜索功能
-    searchVal() {
-      this.getTableData();
+    searchVal () {
+      this.getTableData()
     }
   }
-};
+}
 </script>
 
 <style>
