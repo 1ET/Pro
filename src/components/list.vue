@@ -278,10 +278,10 @@ export default {
       // 获取角色列表
       const list = await this.$http.get('roles')
       this.roles = list.data.data
+      console.log(this.roles)
       // 获取角色名
       this.dialogFormVisibleRole = true
       const res = await this.$http.get(`users/${user}`)
-      console.log(res)
       const {data,data:{rid},meta:{status}} = res.data
       if(status===200){
         this.formdata = data
@@ -289,8 +289,11 @@ export default {
       }
     },
     // 修改权限
-    editRole(){
-
+    async editRole(){
+      this.dialogFormVisibleRole = false
+      // console.log(this.formdata.id,this.selectRole)
+      const res = await this.$http.put(`users/${this.formdata.id}/role`,{rid:this.selectRole})
+      console.log(res)
     }
   }
 };
