@@ -8,6 +8,7 @@ import axios from 'axios'
 import moment from 'moment'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/base.css'
+import packageBread from './components/PackageBread.vue'
 
 axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 Vue.prototype.$http = axios
@@ -15,6 +16,8 @@ Vue.prototype.$http = axios
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+Vue.component('packageBread',packageBread)
 
 Vue.filter('fmtdate', (v) => {
   return moment(v).format('YYYY-MM-DD')
