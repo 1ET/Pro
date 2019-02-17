@@ -20,7 +20,7 @@
         </el-input>
       </el-col>
       <el-col :span="3" style="margin-left:6px">
-        <el-button type="success" @click="dialogFormVisible = true">添加用户</el-button>
+        <el-button type="success" @click="addUsersShow()">添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 列表区域 -->
@@ -29,6 +29,7 @@
       <el-table-column prop="username" label="姓名" width="120"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="140"></el-table-column>
       <el-table-column prop="mobile" label="电话" width="140"></el-table-column>
+
       <!-- 不从prop里获取数据 -->
       <el-table-column label="创建日期" width="140">
         <template slot-scope="scope">{{scope.row.create_time | fmtdate}}</template>
@@ -39,13 +40,30 @@
         </template>
       </el-table-column>
       <el-table-column prop="name" label="操作" width="200">
-        <el-row>
-          <el-button type="primary" icon="el-icon-edit" size="mini" plain circle></el-button>
-          <el-button type="danger" icon="el-icon-delete" size="mini" plain circle></el-button>
-          <el-button type="success" icon="el-icon-check" size="mini" plain circle></el-button>
-        </el-row>
+        <template slot-scope="scope">
+          <el-row>
+            <el-button
+              @click="editUserShow(scope.row)"
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              plain
+              circle
+            ></el-button>
+            <el-button
+              @click="deleteUser(scope.row.id)"
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              plain
+              circle
+            ></el-button>
+            <el-button type="success" icon="el-icon-check" size="mini" plain circle></el-button>
+          </el-row>
+        </template>
       </el-table-column>
     </el-table>
+
     <!-- 分页功能 -->
     <el-pagination
       @size-change="handleSizeChange"
@@ -56,20 +74,59 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
-    <!-- 对话框 -->
-    <el-dialog title="添加用户" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
+
+    <!-- 添加用户 对话框 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
+      <el-form :model="formdata">
         <el-form-item label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="formdata.username" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="formdata.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="formdata.email" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="formdata.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button type="primary" @click="addUsers()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 更改信息 对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+      <el-form :model="formdata">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input v-model="formdata.username" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="formdata.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="formdata.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="editUsers()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 设置角色 对话框 -->
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisibleRole" label-width="80px">
+      <el-form :model="form">
+        <el-form-item label="活动名称">
           <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域">
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -82,63 +139,132 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       list: [],
-      query: '',
+      query: "",
       pagenum: 1,
       pagesize: 2,
       total: -1,
-      dialogTableVisible: false,
-      dialogFormVisible: false,
-      formLabelWidth: '80px',
-      form: {
-        username: '',
-        password: '',
-        email: '',
-        mobile: ''
+      dialogFormVisibleAdd: false,
+      dialogFormVisibleEdit: false,
+      dialogFormVisibleRole:false,
+      formLabelWidth: "80px",
+      formdata: {
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
+      },
+      form:{
+        
       }
-    }
+    };
   },
-  created () {
-    this.getTableData()
+  created() {
+    this.getTableData();
   },
   methods: {
     // 每页数量改变
-    handleSizeChange (val) {
-      this.pagenum = 1
-      this.pagesize = val
-      this.getTableData()
+    handleSizeChange(val) {
+      this.pagenum = 1;
+      this.pagesize = val;
+      this.getTableData();
     },
     // 当前页改变
-    handleCurrentChange (val) {
-      this.pagenum = val
-      this.getTableData()
+    handleCurrentChange(val) {
+      this.pagenum = val;
+      this.getTableData();
     },
     // 发请求获取数据
-    async getTableData () {
-      const AUTH_TOKEN = localStorage.getItem('token')
-      this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
+    async getTableData() {
+      const AUTH_TOKEN = localStorage.getItem("token");
+      this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
       const res = await this.$http.get(
         `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${
           this.pagesize
         }`
-      )
+      );
       const {
         data,
         meta: { msg, status }
-      } = res.data
+      } = res.data;
       if (status === 200) {
-        this.total = data.total
-        this.list = data.users
+        this.total = data.total;
+        this.list = data.users;
       }
     },
     // 搜索功能
-    searchVal () {
-      this.getTableData()
+    searchVal() {
+      this.getTableData();
+    },
+    // 添加对话框
+    addUsersShow() {
+      this.formdata = {};
+      this.dialogFormVisibleAdd = true;
+    },
+    // 添加用户
+    async addUsers() {
+      const res = await this.$http.post(`users`, this.formdata);
+      const {
+        meta: { msg, status }
+      } = res.data;
+      if (status === 201) {
+        this.dialogFormVisibleAdd = false;
+        this.getTableData();
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    // 删除用户
+    deleteUser(user) {
+      this.$confirm("你确定要删除吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const res = await this.$http.delete(`users/${user}`);
+          const {
+            meta: { msg, status }
+          } = res.data;
+          if (status === 200) {
+            this.pagenum = 1;
+            this.getTableData();
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    // 编辑用户
+    editUserShow(data) {
+      this.formdata = data;
+      this.dialogFormVisibleEdit = true;
+    },
+    async editUsers() {
+      const res = await this.$http.put(
+        `users/${this.formdata.id}`,
+        this.formdata
+      );
+      const {
+        meta: { status, msg }
+      } = res.data;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.getTableData();
+        this.dialogFormVisibleEdit = false;
+      }
     }
   }
-}
+};
 </script>
 
 <style>
