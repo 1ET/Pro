@@ -9,9 +9,9 @@ import moment from 'moment'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/base.css'
 import packageBread from './components/PackageBread.vue'
+import HttpServer from './axiosHeader'
 
-axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
-Vue.prototype.$http = axios
+Vue.use(HttpServer)
 
 Vue.use(ElementUI)
 

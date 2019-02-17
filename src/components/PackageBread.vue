@@ -8,7 +8,7 @@
 
 <script>
 export default {
-    name:'PackageBread',
+    name:'packageBread',
     props:["level1","level2"]
 };
 </script>
