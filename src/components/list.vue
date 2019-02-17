@@ -36,7 +36,9 @@
       </el-table-column>
       <el-table-column prop="mg_state" label="用户状态" width="140">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch 
+          @change="stutaChange(scope.row)" 
+          v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="操作" width="200">
@@ -294,6 +296,10 @@ export default {
       // console.log(this.formdata.id,this.selectRole)
       const res = await this.$http.put(`users/${this.formdata.id}/role`,{rid:this.selectRole})
       console.log(res)
+    },
+    // 更改用户状态
+    async stutaChange(user){
+      const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
     }
   }
 };
