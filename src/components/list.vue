@@ -58,7 +58,14 @@
               plain
               circle
             ></el-button>
-            <el-button type="success" icon="el-icon-check" size="mini" plain circle></el-button>
+            <el-button
+              @click="setRole(scope.row.id)"
+              type="success"
+              icon="el-icon-check"
+              size="mini"
+              plain
+              circle
+            ></el-button>
           </el-row>
         </template>
       </el-table-column>
@@ -117,21 +124,25 @@
     </el-dialog>
 
     <!-- 设置角色 对话框 -->
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisibleRole" label-width="80px">
-      <el-form :model="form">
-        <el-form-item label="活动名称">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+    <el-dialog title="用户名" :visible.sync="dialogFormVisibleRole" label-width="80px">
+      <el-form :model="formdata">
+        <el-form-item label="用户名">
+          <span>{{formdata.username}}</span>
         </el-form-item>
-        <el-form-item label="活动区域">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="角色">
+          <el-select v-model="selectRole" placeholder="请选择角色">
+            <el-option label="请选择" :value="-1" disabled></el-option>
+            <el-option 
+            v-for='(item) in roles'
+            :key = 'item.id'
+            :label="item.roleName" 
+            :value="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
+        <el-button type="primary" @click="editRole()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -148,17 +159,16 @@ export default {
       total: -1,
       dialogFormVisibleAdd: false,
       dialogFormVisibleEdit: false,
-      dialogFormVisibleRole:false,
+      dialogFormVisibleRole: false,
       formLabelWidth: "80px",
+      selectRole : -1,
       formdata: {
         username: "",
         password: "",
         email: "",
         mobile: ""
       },
-      form:{
-        
-      }
+      roles:[]
     };
   },
   created() {
@@ -262,6 +272,25 @@ export default {
         this.getTableData();
         this.dialogFormVisibleEdit = false;
       }
+    },
+    // 角色管理 对话框
+    async setRole(user) {
+      // 获取角色列表
+      const list = await this.$http.get('roles')
+      this.roles = list.data.data
+      // 获取角色名
+      this.dialogFormVisibleRole = true
+      const res = await this.$http.get(`users/${user}`)
+      console.log(res)
+      const {data,data:{rid},meta:{status}} = res.data
+      if(status===200){
+        this.formdata = data
+        this.selectRole = rid
+      }
+    },
+    // 修改权限
+    editRole(){
+
     }
   }
 };
