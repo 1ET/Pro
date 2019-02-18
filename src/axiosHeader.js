@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { url } from 'inspector';
-const HttpServer = {}
+
+const HttpServer = {};
+
 
 HttpServer.install = function (Vue) {
     // 4. 添加实例方法
@@ -8,9 +9,9 @@ HttpServer.install = function (Vue) {
     // 添加请求拦截器
     axios.interceptors.request.use(function (config) {
         // 在发送请求之前做些什么
-        if (url !== "login") {
+        if (config.url !== "login") {
             const AUTH_TOKEN = localStorage.getItem("token");
-            axios.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+            config.headers["Authorization"] = AUTH_TOKEN;
         }
         return config;
     }, function (error) {

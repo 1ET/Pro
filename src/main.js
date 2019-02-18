@@ -4,12 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
-import axios from 'axios'
+// import axios from 'axios'
 import moment from 'moment'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/base.css'
 import packageBread from './components/PackageBread.vue'
-import HttpServer from './axiosHeader'
+import HttpServer from '@/axiosHeader.js'
 
 Vue.use(HttpServer)
 
