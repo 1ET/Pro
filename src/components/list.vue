@@ -255,6 +255,7 @@ export default {
         });
     },
     // 编辑用户
+    // 有点小bug
     editUserShow(data) {
       this.formdata = data;
       this.dialogFormVisibleEdit = true;
