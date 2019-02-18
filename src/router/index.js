@@ -4,6 +4,7 @@ import Login from '@/components/login.vue'
 import Home from '@/components/home.vue'
 import List from '@/components/list.vue'
 import rightsList from '@/components/rights.vue'
+import rolesList from '@/components/roles.vue'
 
 Vue.use(Router)
 
@@ -17,10 +18,14 @@ export default new Router({
         path: '/list',
         name: 'list',
         component: List
-      },{
-        path:'/rightsList',
-        name:'rightsList',
-        component:rightsList
+      }, {
+        path: '/rightsList',
+        name: 'rightsList',
+        component: rightsList
+      }, {
+        path: '/roles',
+        name: 'roles',
+        component: rolesList
       }]
     },
     {
