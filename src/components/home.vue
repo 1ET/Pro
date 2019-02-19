@@ -15,8 +15,17 @@
     </el-header>
     <el-container>
       <el-aside class="aside" width="200px">
-        <el-menu unique-opened :router="true" default-active="2" class="el-menu-vertical-demo">
-          <!-- 模块1 -->
+        <el-menu unique-opened :router="true" default-active="1" class="el-menu-vertical-demo">
+          <!-- 动态展示路由 -->
+          <el-submenu :index="item1.order+''" v-for="(item1,i) in menuList" :key="item1.id">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>{{item1.authName}}</span>
+            </template>
+            <el-menu-item :index="item2.order+''" class="el-icon-menu" v-for="(item2,i) in item1.children" :key="item2.id">{{item2.authName}}</el-menu-item>
+          </el-submenu>
+          
+          <!-- 模块1
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -25,7 +34,7 @@
             <el-menu-item index="list" class="el-icon-menu">用户列表</el-menu-item>
           </el-submenu>
 
-          <!-- 模块2 -->
+          模块2
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -35,7 +44,7 @@
             <el-menu-item index="rightsList" class="el-icon-menu">权限列表</el-menu-item>
           </el-submenu>
 
-          <!-- 模块3 -->
+          模块3
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -46,7 +55,7 @@
             <el-menu-item index="1-1" class="el-icon-menu">商品分类</el-menu-item>
           </el-submenu>
 
-          <!-- 模块4 -->
+          模块4
           <el-submenu index="4">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -55,14 +64,14 @@
             <el-menu-item index="1-1" class="el-icon-menu">订单列表</el-menu-item>
           </el-submenu>
 
-          <!-- 模块5 -->
+          模块5
           <el-submenu index="5">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>数据统计</span>
             </template>
             <el-menu-item index="1-1" class="el-icon-menu">数据报表</el-menu-item>
-          </el-submenu>
+          </el-submenu> -->
         </el-menu>
       </el-aside>
       <el-main class="main">
@@ -74,24 +83,40 @@
 
 <script>
 export default {
-  beforeMount () {
-    if (!localStorage.getItem('token')) {
-      this.$router.push({
-        name: 'login'
-      })
-      this.$message.error('请先登录')
-    }
+  data() {
+    return {
+      menuList:[]
+    };
   },
+  mounted() {
+    this.queryMeau();
+  },
+  // beforeMount() {
+  //   if (!localStorage.getItem("token")) {
+  //     this.$router.push({
+  //       name: "login"
+  //     });
+  //     this.$message.error("请先登录");
+  //   }
+  // },
   methods: {
-    handleLoginout () {
+    handleLoginout() {
       this.$router.push({
-        name: 'login'
-      })
-      this.$message.success('退出成功')
-      localStorage.clear()
+        name: "login"
+      });
+      this.$message.success("退出成功");
+      localStorage.clear();
+    },
+    async queryMeau() {
+      const res = await this.$http.get("menus");
+      const {data,meta:{msg,status}} = res.data
+      if(status===200){
+        this.menuList = data
+      }
+      console.log(res);
     }
   }
-}
+};
 </script>
 
 <style>
