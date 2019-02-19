@@ -31,10 +31,12 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item label="商品分类">
+            <i>{{selectedOptions}}</i>
             <el-cascader
+              clearable
               expand-trigger="hover"
               :options="options"
-              v-model="selectedOptions2"
+              v-model="selectedOptions"
               @change="handleChange"
               :props="props"
             ></el-cascader>
@@ -63,12 +65,39 @@ export default {
         value: "cat_id",
         label: "cat_name"
       },
-      selectedOptions2: [],
-      form: {}
+      selectedOptions: [1, 3, 6],
+      //   goods_name	商品名称	不能为空
+      //   goods_cat	以为','分割的分类列表	不能为空
+      //   goods_price	价格	不能为空
+      //   goods_number	数量	不能为空
+      //   goods_weight	重量	不能为空
+      //   goods_introduce	介绍	可以为空
+      //   pics	上传的图片临时路径（对象）	可以为空
+      //   attrs	商品的参数（数组）	可以为空
+      form: {
+        goods_name: "",
+        goods_cat: "",
+        goods_price: "",
+        goods_number: "",
+        goods_weight: "",
+        goods_introduce: "",
+        pics: [{}],
+        attrs: []
+      }
     };
   },
   methods: {
-    handleClick() {},
+    async handleClick() {
+        console.log(this.activeName,this.selectedOptions.length)
+        if(this.activeName==='1'||this.activeName==='2'){
+            if(this.selectedOptions.length!==3){
+                this.$message.error("请先选择三级菜单")
+                return;
+            }
+            const res = await this.$http.get(`categories/${this.selectedOptions[2]}/attributes?sel=many`)
+            console.log(res)
+        }
+    },
     handleChange() {},
     async getGoods() {
       const res = await this.$http.get(`categories?type=3`);
@@ -76,7 +105,7 @@ export default {
         data,
         meta: { status, msg }
       } = res.data;
-    //   console.log(res);
+      //   console.log(res);
       if (status === 200) {
         this.options = data;
       }
