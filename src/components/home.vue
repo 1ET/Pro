@@ -113,7 +113,7 @@ export default {
       if(status===200){
         this.menuList = data
       }
-      console.log(res);
+      // console.log(res);
     }
   }
 };
