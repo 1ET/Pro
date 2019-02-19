@@ -2,7 +2,7 @@
   <el-card style="height:450px" shadow="always">
     <package-bread level1="权限管理" level2="角色列表"></package-bread>
     <el-button type="success" class="btn">添加角色</el-button>
-    <el-table :data="list" style="width:100%" max-height="400">
+    <el-table :data="roles" style="width:100%" max-height="400">
       <el-table-column width="80" type="expand" class="el-icon-arrow-right">
         <template slot-scope="scope">
           <el-row v-for="(item,i) in scope.row.children" :key="item.id" class="rowF1">
@@ -45,7 +45,7 @@
       <el-table-column prop="roleDesc" label="角色描述" width="240"></el-table-column>
 
       <!-- 不从prop里获取数据 -->
-      <el-table-column prop="name" label="操作" width="200">
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-row>
             <el-button
@@ -65,7 +65,7 @@
               circle
             ></el-button>
             <el-button
-              @click="setRole(scope.row.id)"
+              @click="setRole(scope.row)"
               type="success"
               icon="el-icon-check"
               size="mini"
@@ -76,6 +76,21 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="分配权限" :visible.sync="dialogFormVisible">
+      <el-tree
+        ref="treeDom"
+        :data="treeList"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="defaultChecked"
+        :props="defaultProps"
+      ></el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setRights()">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -83,7 +98,15 @@
 export default {
   data() {
     return {
-      list: []
+      roles: [],
+      dialogFormVisible: false,
+      currId : -1,
+      treeList: [],
+      defaultChecked: [],
+      defaultProps: {
+        children: "children",
+        label: "authName"
+      }
     };
   },
   methods: {
@@ -95,8 +118,7 @@ export default {
         meta: { msg, status }
       } = res.data;
       if (status === 200) {
-        this.list = data;
-        console.log(this.list);
+        this.roles = data;
       }
     },
     // 取消角色权限
@@ -109,9 +131,52 @@ export default {
         meta: { msg, status },
         data
       } = res.data;
-      if(status===200){
-        this.$message.success('取消权限成功')
-        user.children = data
+      if (status === 200) {
+        this.$message.success("取消权限成功");
+        user.children = data;
+      }
+    },
+    // 显示树形结构
+    async setRole(user) {
+      this.currId = user.id;
+
+      const res = await this.$http.get(`rights/tree `);
+      const {
+        data,
+        meta: { msg, status }
+      } = res.data;
+      if (status === 200) {
+        this.treeList = data;
+
+        const temp1 = [];
+        user.children.forEach(item => {
+          item.children.forEach(item1 => {
+            item1.children.forEach(item2 => {
+              temp1.push(item2.id);
+            });
+          });
+        });
+        this.defaultChecked = temp1;
+      }
+      this.dialogFormVisible = true;
+      console.log(user, this.roles);
+    },
+    // 树形结构修改权限
+    async setRights() {
+      // 获取选择状态下的tree节点
+      const arr1 = this.$refs.treeDom.getCheckedKeys();
+      const arr2 = this.$refs.treeDom.getHalfCheckedNodes();
+      const arr = [...arr1, ...arr2];
+      const res = await this.$http.post(`roles/${this.currId}/rights`, {
+        rids: arr.join(",")
+      });
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 200) {
+        this.dialogFormVisible = false;
+        this.getUserRights()
       }
     }
   },
