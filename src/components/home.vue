@@ -22,7 +22,7 @@
               <i class="el-icon-location"></i>
               <span>{{item1.authName}}</span>
             </template>
-            <el-menu-item :index="item2.order+''" class="el-icon-menu" v-for="(item2,i) in item1.children" :key="item2.id">{{item2.authName}}</el-menu-item>
+            <el-menu-item :index="item2.path" class="el-icon-menu" v-for="(item2,i) in item1.children" :key="item2.id">{{item2.authName}}</el-menu-item>
           </el-submenu>
           
           <!-- 模块1
