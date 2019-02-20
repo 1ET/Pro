@@ -43,7 +43,16 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="商品参数">商品参数</el-tab-pane>
+
+      <el-tab-pane label="商品参数">
+        <el-form label-position="top" label-width="80px">
+          <el-form-item :label="item.attr_name" v-for="(item,i) in arrDy" :key="item.attr_id">
+            <el-checkbox-group v-model="item.attr_vals">
+              <el-checkbox :label="item1" v-for="(item1,i) in item.attr_vals" :key="i" border></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
       <el-tab-pane label="商品属性">商品属性</el-tab-pane>
       <el-tab-pane label="商品图片">商品图片</el-tab-pane>
       <el-tab-pane label="商品内容">商品内容</el-tab-pane>
@@ -61,6 +70,8 @@ export default {
       activeName: "0",
       formLabelAlign: {},
       options: [],
+      checkList: ["aa"],
+      arrDy: [],
       props: {
         value: "cat_id",
         label: "cat_name"
@@ -88,15 +99,27 @@ export default {
   },
   methods: {
     async handleClick() {
-        console.log(this.activeName,this.selectedOptions.length)
-        if(this.activeName==='1'||this.activeName==='2'){
-            if(this.selectedOptions.length!==3){
-                this.$message.error("请先选择三级菜单")
-                return;
-            }
-            const res = await this.$http.get(`categories/${this.selectedOptions[2]}/attributes?sel=many`)
-            console.log(res)
+      console.log(this.activeName, this.selectedOptions.length);
+      if (this.activeName === "1" || this.activeName === "2") {
+        if (this.selectedOptions.length !== 3) {
+          this.$message.error("请先选择三级菜单");
+          return;
         }
+        const res = await this.$http.get(
+          `categories/${this.selectedOptions[2]}/attributes?sel=many`
+        );
+        const {
+          data,
+          meta: { msg, status }
+        } = res.data;
+        if (status === 200) {
+          this.arrDy = data;
+          console.log(this.arrDy)
+          this.arrDy.forEach(item => {
+            item.attr_vals = item.attr_vals.trim().length === 0 ? [] : item.attr_vals.trim().split(",");
+          });
+        }
+      }
     },
     handleChange() {},
     async getGoods() {
@@ -105,7 +128,6 @@ export default {
         data,
         meta: { status, msg }
       } = res.data;
-      //   console.log(res);
       if (status === 200) {
         this.options = data;
       }
