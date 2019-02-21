@@ -8,6 +8,7 @@ import rolesList from '@/components/roles.vue'
 import goodsList from '@/components/goodslist.vue'
 import { Message } from 'element-ui'
 import goodsAdd from'@/components/goodsadd.vue'
+import goodsParams from '@/components/goodsParams.vue'
 
 Vue.use(Router)
 
@@ -37,6 +38,10 @@ const router = new Router({
         path:'/goodsadd',
         name:'goodsadd',
         component:goodsAdd
+      },{
+        name:'params',
+        path:'/params',
+        component:goodsParams
       }
     ]
     },
