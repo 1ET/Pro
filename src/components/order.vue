@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <my-bread level1="订单管理" level2="订单列表"></my-bread>
+    <package-bread level1="订单管理" level2="订单列表"></package-bread>
     <el-table :data="list" style="width: 100%">
       <el-table-column type="index" label="#" width="40"></el-table-column>
       <el-table-column prop="order_number" label="订单编号" width="180"></el-table-column>
@@ -13,7 +13,7 @@
       </el-table-column>
       <el-table-column prop="is_send" label="是否发货" width="100"></el-table-column>
       <el-table-column label="下单时间" width="90">
-        <template slot-scope="scope">{{scope.row.create_time|fmtDate}}</template>
+        <template slot-scope="scope">{{scope.row.create_time|fmtdate}}</template>
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">

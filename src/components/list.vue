@@ -24,7 +24,7 @@
       </el-col>
     </el-row>
     <!-- 列表区域 -->
-    <el-table :data="list" style="height: 300px width:100%">
+    <el-table :data="list" style="height: 300px width:100%" v-loading="loading">
       <el-table-column prop="id" label="#" width="80"></el-table-column>
       <el-table-column prop="username" label="姓名" width="120"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="140"></el-table-column>
@@ -154,6 +154,7 @@
 export default {
   data() {
     return {
+      loading:true,
       list: [],
       query: "",
       pagenum: 1,
@@ -200,6 +201,7 @@ export default {
         meta: { msg, status }
       } = res.data;
       if (status === 200) {
+        this.loading = false;
         this.total = data.total;
         this.list = data.users;
       }

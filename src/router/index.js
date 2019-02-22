@@ -7,10 +7,11 @@ import rightsList from '@/components/rights.vue'
 import rolesList from '@/components/roles.vue'
 import goodsList from '@/components/goodslist.vue'
 import { Message } from 'element-ui'
-import goodsAdd from'@/components/goodsadd.vue'
+import goodsAdd from '@/components/goodsadd.vue'
 import goodsParams from '@/components/goodsParams.vue'
 import orders from '@/components/order.vue'
 import categories from '@/components/Goodscate.vue'
+import reports from '@/components/reports.vue'
 
 Vue.use(Router)
 
@@ -32,28 +33,32 @@ const router = new Router({
         path: '/roles',
         name: 'roles',
         component: rolesList
-      },{
-        path:'/goods',
-        name:'goods',
-        component:goodsList
-      },{
-        path:'/goodsadd',
-        name:'goodsadd',
-        component:goodsAdd
-      },{
-        name:'params',
-        path:'/params',
-        component:goodsParams
-      },{
-        name:'orders',
-        path:'/orders',
-        component:orders
-      },{
-        name:'categories',
-        path:'/categories',
-        component:categories
+      }, {
+        path: '/goods',
+        name: 'goods',
+        component: goodsList
+      }, {
+        path: '/goodsadd',
+        name: 'goodsadd',
+        component: goodsAdd
+      }, {
+        name: 'params',
+        path: '/params',
+        component: goodsParams
+      }, {
+        name: 'orders',
+        path: '/orders',
+        component: orders
+      }, {
+        name: 'categories',
+        path: '/categories',
+        component: categories
+      }, {
+        name: 'reports',
+        path: '/reports',
+        component: reports
       }
-    ]
+      ]
     },
     {
       name: 'login',
@@ -63,18 +68,18 @@ const router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) =>{
-  if(to.name==='login'){
+router.beforeEach((to, from, next) => {
+  if (to.name === 'login') {
     next()
-  }else{
+  } else {
     const token = localStorage.getItem('token')
-    if(!token){
+    if (!token) {
       Message.warning('请先登录')
-      router.push({name:'login'})
+      router.push({ name: 'login' })
       return
     }
     next()
   }
-}) 
+})
 
 export default router
