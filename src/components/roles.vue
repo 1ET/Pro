@@ -3,7 +3,12 @@
     <package-bread level1="权限管理" level2="角色列表"></package-bread>
     <el-button type="success" class="btn">添加角色</el-button>
     <el-table :data="roles" style="width:100%" max-height="400">
-      <el-table-column width="80" type="expand" class="el-icon-arrow-right">
+      <el-table-column
+        width="80"
+        type="expand"
+        class="el-icon-arrow-right"
+        @expand-change="fn(row, expandedRows)"
+      >
         <template slot-scope="scope">
           <el-row v-for="(item,i) in scope.row.children" :key="item.id" class="rowF1">
             <el-col :span="4">
@@ -100,7 +105,7 @@ export default {
     return {
       roles: [],
       dialogFormVisible: false,
-      currId : -1,
+      currId: -1,
       treeList: [],
       defaultChecked: [],
       defaultProps: {
@@ -110,6 +115,13 @@ export default {
     };
   },
   methods: {
+    // 只展开一行
+    fn(row, expandedRows) {
+      if(expandedRows.length>1){
+        expandedRows.shift()
+      }
+      console.log(expandedRows)
+    },
     // 获取角色权限
     async getUserRights() {
       const res = await this.$http.get(`roles`);
@@ -176,7 +188,7 @@ export default {
       } = res.data;
       if (status === 200) {
         this.dialogFormVisible = false;
-        this.getUserRights()
+        this.getUserRights();
       }
     }
   },
@@ -186,7 +198,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .btn {
   margin-top: 20px;
 }

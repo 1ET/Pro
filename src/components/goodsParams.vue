@@ -22,7 +22,7 @@
         <el-button disabled>设置动态参数</el-button>
         <el-table height="450px" border stripe :data="arrDy" style="width: 100%">
           <!-- 设置可展开列及动态编辑标签 -->
-          <el-table-column type="expand" width="140px">
+          <el-table-column type="expand" width="140px" @expand-change="fn(row, expandedRows)">
             <template slot-scope="scope">
               <el-tag
                 :key="i"
@@ -91,6 +91,12 @@ export default {
     };
   },
   methods: {
+    fn() {
+      if (expandedRows.length > 1) {
+        expandedRows.shift();
+      }
+    },
+
     async handleChange() {
       // if (this.selectedOptions.length === 3) {
       //   const res = await this.$http.get(
@@ -109,7 +115,7 @@ export default {
       //   });
       //   console.log(data);
       // }
-      this.getDyparms()
+      this.getDyparms();
     },
     async getGoods() {
       const res = await this.$http.get(`categories?type=3`);
@@ -213,7 +219,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .box {
   height: 100%;
 }

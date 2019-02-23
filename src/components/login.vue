@@ -55,7 +55,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .login-warp {
   background: #324152;
   height: 100%;

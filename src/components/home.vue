@@ -119,7 +119,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   height: 100%;
   background: red;

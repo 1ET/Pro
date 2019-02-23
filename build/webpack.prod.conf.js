@@ -16,7 +16,7 @@ const env = require('../config/prod.env')
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
-      sourceMap: config.build.productionSourceMap,
+      // sourceMap: config.build.productionSourceMap,
       extract: true,
       usePostCSS: true
     })
@@ -38,7 +38,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           warnings: false
         }
       },
-      sourceMap: config.build.productionSourceMap,
+      // sourceMap: config.build.productionSourceMap,
       parallel: true
     }),
     // extract css into its own file

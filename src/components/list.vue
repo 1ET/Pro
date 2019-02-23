@@ -140,6 +140,7 @@
             :label="item.roleName" 
             :value="item.id"></el-option>
           </el-select>
+          
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -306,7 +307,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .cardShow {
   height: 100%;
 }
